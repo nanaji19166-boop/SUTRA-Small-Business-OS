@@ -1,0 +1,3 @@
+import superjson from "superjson";
+export type OutputType={sales:Array<{id:string;saleNumber:string;customerId:string|null;customerName:string|null;totalAmount:number;balanceAmount:number;saleDate:string}>};
+export const getSales=async(businessId:string,init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/sales?businessId="+encodeURIComponent(businessId),{method:"GET",...init,credentials:"include"});if(!r.ok){const e=superjson.parse<{message?:string}>(await r.text());throw new Error(e.message||"Unable to load sales")}return superjson.parse<OutputType>(await r.text())};

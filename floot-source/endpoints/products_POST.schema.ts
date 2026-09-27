@@ -1,0 +1,4 @@
+import {z} from "zod";import superjson from "superjson";
+export const schema=z.object({businessId:z.string().uuid(),name:z.string().trim().min(1),sku:z.string().trim().optional().default(""),category:z.string().trim().optional().default(""),unit:z.string().trim().min(1).default("pcs"),salePrice:z.coerce.number().min(0).default(0),purchasePrice:z.coerce.number().min(0).default(0),reorderLevel:z.coerce.number().min(0).default(0)});
+export type OutputType={productId:string};
+export const postProduct=async(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/products",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok){const e=superjson.parse<{message?:string}>(await r.text());throw new Error(e.message||"Unable to create product")}return superjson.parse<OutputType>(await r.text())};

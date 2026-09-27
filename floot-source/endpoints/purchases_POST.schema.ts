@@ -1,0 +1,6 @@
+import { z } from "zod";
+import superjson from "superjson";
+export const lineSchema=z.object({productId:z.string().uuid(),quantity:z.coerce.number().positive(),unitPrice:z.coerce.number().min(0)});
+export const schema=z.object({businessId:z.string().uuid(),supplierId:z.string().uuid().optional().nullable(),locationId:z.string().uuid().optional().nullable(),purchaseNumber:z.string().trim().min(1).max(80),purchaseDate:z.string().optional(),discount:z.coerce.number().min(0).default(0),paidAmount:z.coerce.number().min(0).default(0),paymentMethod:z.enum(["cash","upi","bank","card","other"]).optional().nullable(),notes:z.string().trim().optional().default(""),lines:z.array(lineSchema).min(1)});
+export type OutputType={purchaseId:string;totalAmount:number};
+export const postPurchase=async(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/purchases",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok){const e=superjson.parse<{message?:string}>(await r.text());throw new Error(e.message||"Unable to save purchase")}return superjson.parse<OutputType>(await r.text())};
