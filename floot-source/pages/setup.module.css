@@ -1,0 +1,14 @@
+.page { min-height:100vh; padding:24px 16px 48px; background:var(--background); }
+.header { width:min(100%,900px); margin:0 auto 18px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; }
+.kicker { margin:0; color:var(--primary); font-size:11px; font-weight:800; letter-spacing:.12em; }
+.header h1 { margin:4px 0; font:650 30px var(--font-family-display); }
+.header p { margin:0; color:var(--muted-foreground); font-size:13px; }
+.grid { width:min(100%,900px); margin:auto; display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.card { min-height:130px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px; padding:18px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:var(--shadow); }
+.icon { width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background:var(--surface); color:var(--primary); }
+.card h2 { margin:0 0 3px; font:600 18px var(--font-family-display); }
+.card p { margin:0; color:var(--muted-foreground); font-size:12px; }
+.arrow { color:var(--muted-foreground); }
+.note { width:min(100%,900px); margin:14px auto 0; padding:15px; display:flex; gap:8px; flex-direction:column; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); font-size:12px; }
+.note span { color:var(--muted-foreground); line-height:1.5; }
+@media(max-width:650px){.header{align-items:flex-start;flex-direction:column}.header>button{width:100%}.grid{grid-template-columns:1fr}}
