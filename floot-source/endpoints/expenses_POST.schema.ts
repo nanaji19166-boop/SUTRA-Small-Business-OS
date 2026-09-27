@@ -1,0 +1,4 @@
+import { z } from "zod";import superjson from "superjson";
+export const schema=z.object({businessId:z.string().uuid(),category:z.string().trim().min(1),amount:z.coerce.number().positive(),expenseDate:z.string().optional(),paymentMethod:z.enum(["cash","upi","bank","card","other"]).default("cash"),notes:z.string().trim().optional().default("")});
+export type OutputType={expenseId:string};
+export const postExpense=async(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/expenses",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok){const e=superjson.parse<{message?:string}>(await r.text());throw new Error(e.message||"Unable to save expense")}return superjson.parse<OutputType>(await r.text())};
