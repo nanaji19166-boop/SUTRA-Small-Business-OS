@@ -1,0 +1,13 @@
+SUTRA — Small Business OS is a production-ready, mobile-first business operating system for micro and small businesses. It must be industry-neutral at its core and should work for a village retailer, field seller, small wholesaler, repair/service business, home business or growing local shop. The first pilot uses a one-gram jewellery field-selling scenario only as realistic sample data; jewellery must never be baked into the core architecture or branding.
+
+Core product idea: one simple system connecting Customers, Suppliers, Items, Inventory, Purchases, Sales, Payments, Collections, Expenses, field/location stock and business insights. It should feel like a lightweight CRM + inventory + cash/collections + operational ERP for a very small business, while hiding enterprise accounting complexity from the everyday user.
+
+The home experience must prioritize a few large actions: Add Sale, Add Purchase/Stock, Collect Payment, Customers, Stock and Reports. Every transaction should update the relevant stock, customer balance, cash/payment records and business metrics consistently. Support cash, UPI and other payment methods, credit sales, installment/EMI-style collection schedules, partial payments, overdue amounts, expenses, stock transfers between locations/field staff, and profit/cash summaries.
+
+Design for users with low technical familiarity: Telugu-first with English support, large touch targets, minimal typing, simple terminology, guided forms, useful defaults, confirmation before destructive actions, clear offline-friendly states, and fast workflows. The architecture should be ready for multiple businesses, users/roles and locations later.
+
+AI/photo assistance is an optional productivity layer. For inventory intake, the user may photograph an item and receive suggested category/type/model/quantity metadata where feasible, but the app must always show the suggestion as uncertain and require human confirmation. Confirmed product photos can become the business's own reference catalog. Never claim exact identification from an image when confidence is insufficient.
+
+Production principles: persistent PostgreSQL storage, consistent transaction history/auditability, secure server-side operations, validation, reliable stock calculations, idempotent mutation design where appropriate, useful error states, responsive mobile UI, accessible controls, and real business data rather than fake-looking placeholders once the backend is connected.
+
+Brand: SUTRA. The name represents the thread connecting every part of a small business. Use SUTRA as the product/platform name, with the descriptor “Small Business OS” where needed. Do not call the product a cousin's jewellery app or tie the brand to a single trade.
