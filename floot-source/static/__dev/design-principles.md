@@ -1,0 +1,7 @@
+SUTRA is a pocket business operating system: one connected thread joining stock, customers, sales, collections, expenses and decisions. The visual language should feel like a trustworthy tool a shop owner can use every day, not a finance app and not an enterprise ERP clone.
+
+Support light and dark modes. Use a tight, task-first pacing for mobile work. Favor large touch targets, obvious hierarchy, calm surfaces and one unmistakable action color. Use deep indigo as the structural brand color and a restrained saffron-gold signal for important business moments. Avoid rainbow dashboards and decorative gradients.
+
+Typography should be highly legible for Telugu and English. Use Noto Sans Telugu for the interface and Bricolage Grotesque for short English display moments. Numbers should be prominent and easy to scan. Surfaces should feel warm and practical, with moderate radii, quiet borders and restrained shadows.
+
+The product must be industry-neutral at the core. Jewellery is only a seeded example catalog, never part of the brand identity. Labels, workflows and data structures should describe generic Items, Customers, Suppliers, Sales, Purchases, Payments, Collections, Expenses and Locations, with industry-specific fields configurable later.
