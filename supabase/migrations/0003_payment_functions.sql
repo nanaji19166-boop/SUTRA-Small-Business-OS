@@ -96,7 +96,16 @@ begin
     for update;
 
     if not found then raise exception 'Collection schedule not found'; end if;
-    if v_customer_id is distinct from v_schedule_customer_id then raise exception 'Payment customer does not match collection'; end if;
+    if p_customer_id is not null and p_customer_id is distinct from v_schedule_customer_id then
+      raise exception 'Payment customer does not match collection';
+    end if;
+    v_customer_id := v_schedule_customer_id;
+    if p_sale_id is not null then
+      if not exists (
+        select 1 from sales
+        where id=p_sale_id and business_id=p_business_id and customer_id=v_schedule_customer_id
+      ) then raise exception 'Sale does not match collection customer'; end if;
+    end if;
     if p_amount > v_outstanding then raise exception 'Payment exceeds collection outstanding'; end if;
 
     v_new_outstanding := v_outstanding-p_amount;
