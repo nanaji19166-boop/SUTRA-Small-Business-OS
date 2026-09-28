@@ -278,14 +278,52 @@ create policy membership_owner_write on business_memberships for all using (
   exists(select 1 from business_memberships m where m.business_id = business_memberships.business_id and m.user_id = auth.uid() and m.role = 'owner' and m.status = 'active')
 ) with check (true);
 
-do $$
-declare t text;
-begin
-  foreach t in array array[
-    'business_settings','locations','customers','suppliers','products','purchases','purchase_lines',
-    'sales','sale_lines','payments','collection_schedules','collection_payments','expenses',
-    'inventory_movements','audit_log'
-  ] loop
-    execute format('create policy %I on %I for all using (is_business_member(business_id)) with check (is_business_member(business_id))', 'business_scope_'||t, t);
-  end loop;
-end $$;
+
+create policy business_settings_scope on business_settings for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy locations_scope on locations for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy customers_scope on customers for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy suppliers_scope on suppliers for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy products_scope on products for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy purchases_scope on purchases for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy sales_scope on sales for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy payments_scope on payments for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy collection_schedules_scope on collection_schedules for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy expenses_scope on expenses for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy inventory_scope on inventory_movements for all using (is_business_member(business_id)) with check (is_business_member(business_id));
+create policy audit_scope on audit_log for select using (is_business_member(business_id));
+
+create policy purchase_lines_scope on purchase_lines for all
+using (exists (select 1 from purchases p where p.id=purchase_lines.purchase_id and is_business_member(p.business_id)))
+with check (exists (select 1 from purchases p where p.id=purchase_lines.purchase_id and is_business_member(p.business_id)));
+
+create policy sale_lines_scope on sale_lines for all
+using (exists (select 1 from sales s where s.id=sale_lines.sale_id and is_business_member(s.business_id)))
+with check (exists (select 1 from sales s where s.id=sale_lines.sale_id and is_business_member(s.business_id)));
+
+create policy collection_payments_scope on collection_payments for all
+using (exists (select 1 from collection_schedules c where c.id=collection_payments.schedule_id and is_business_member(c.business_id)))
+with check (exists (select 1 from collection_schedules c where c.id=collection_payments.schedule_id and is_business_member(c.business_id)));
+
+create or replace function public.is_business_owner(target_business_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from business_memberships
+    where business_id = target_business_id
+      and user_id = auth.uid()
+      and role = 'owner'
+      and status = 'active'
+  );
+$$;
+
+drop policy if exists membership_owner_write on business_memberships;
+create policy membership_owner_write on business_memberships for all
+using (is_business_owner(business_id))
+with check (is_business_owner(business_id));
+
+create policy audit_insert on audit_log for insert
+with check (is_business_member(business_id));
