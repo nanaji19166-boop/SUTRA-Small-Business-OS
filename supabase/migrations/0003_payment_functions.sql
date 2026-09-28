@@ -45,6 +45,7 @@ declare
   v_payment_id uuid;
   v_customer_id uuid := p_customer_id;
   v_supplier_id uuid := p_supplier_id;
+  v_schedule_customer_id uuid;
   v_outstanding numeric;
   v_new_outstanding numeric;
   v_next date;
@@ -89,13 +90,13 @@ begin
 
   if p_schedule_id is not null then
     select customer_id,outstanding_amount,frequency,next_due_date
-      into v_customer_id,v_outstanding,v_frequency,v_due
+      into v_schedule_customer_id,v_outstanding,v_frequency,v_due
     from collection_schedules
     where id=p_schedule_id and business_id=p_business_id and is_active
     for update;
 
     if not found then raise exception 'Collection schedule not found'; end if;
-    if v_customer_id is distinct from v_customer_id then raise exception 'Payment customer does not match collection'; end if;
+    if v_customer_id is distinct from v_schedule_customer_id then raise exception 'Payment customer does not match collection'; end if;
     if p_amount > v_outstanding then raise exception 'Payment exceeds collection outstanding'; end if;
 
     v_new_outstanding := v_outstanding-p_amount;
