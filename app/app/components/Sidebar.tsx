@@ -7,6 +7,8 @@ const nav=[
   ["Stock","/stock",Boxes],
   ["Customers","/customers",Users],
   ["Collections","/collections",CircleDollarSign],
+  ["Finance","/finance",ReceiptText],
+  ["Reports","/reports",ReceiptText],
   ["More","/setup",Settings2],
 ] as const;
 
