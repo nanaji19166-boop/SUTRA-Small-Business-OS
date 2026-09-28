@@ -1,0 +1,17 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { Sidebar,MobileActionBar } from "@/app/components/Sidebar";
+export const dynamic="force-dynamic";
+export default async function ReportsPage(){
+ if(!process.env.NEXT_PUBLIC_SUPABASE_URL)return <main className="p-6">Connect Supabase first.</main>;
+ const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)redirect("/login");
+ const {data:businesses}=await supabase.from("businesses").select("id,name").limit(1);const business=businesses?.[0];if(!business)redirect("/setup");
+ const [{data:sales},{data:purchases},{data:expenses},{data:payments},{data:collections}]=await Promise.all([
+  supabase.from("sales").select("total_amount,paid_amount,balance_amount,sale_date").eq("business_id",business.id).eq("status","confirmed"),
+  supabase.from("purchases").select("total_amount,paid_amount,purchase_date").eq("business_id",business.id).eq("status","confirmed"),
+  supabase.from("expenses").select("amount,expense_date").eq("business_id",business.id),
+  supabase.from("payments").select("amount,payment_date,customer_id,supplier_id").eq("business_id",business.id),
+  supabase.from("collection_schedules").select("outstanding_amount,next_due_date,is_active").eq("business_id",business.id)]);
+ const totalSales=(sales??[]).reduce((s,x)=>s+Number(x.total_amount),0);const totalPurchases=(purchases??[]).reduce((s,x)=>s+Number(x.total_amount),0);const totalExpenses=(expenses??[]).reduce((s,x)=>s+Number(x.amount),0);const receivable=(sales??[]).reduce((s,x)=>s+Number(x.balance_amount),0);const customerCollections=(payments??[]).filter(x=>x.customer_id).reduce((s,x)=>s+Number(x.amount),0);const supplierPayments=(payments??[]).filter(x=>x.supplier_id).reduce((s,x)=>s+Number(x.amount),0);const scheduled=(collections??[]).filter(x=>x.is_active).reduce((s,x)=>s+Number(x.outstanding_amount),0);
+ return <div className="sutra-shell"><Sidebar/><main className="sutra-main"><div className="sutra-content"><div className="mb-5"><div className="eyebrow">Reports</div><h1 className="mt-1 text-2xl font-extrabold">Business report</h1><p className="text-sm text-slate-500">Live operational summary from confirmed transactions.</p></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[["Sales",totalSales],["Purchases",totalPurchases],["Expenses",totalExpenses],["Receivables",receivable]].map(([k,v])=><div className="card p-4" key={String(k)}><div className="eyebrow">{k}</div><div className="value">₹{Number(v).toLocaleString("en-IN")}</div></div>)}</div><div className="mt-5 grid gap-4 lg:grid-cols-2"><div className="card p-5"><div className="section-title">Collections</div><div className="mt-4 space-y-2 text-sm"><div className="flex justify-between"><span>Customer payments</span><b>₹{customerCollections.toLocaleString("en-IN")}</b></div><div className="flex justify-between"><span>Scheduled outstanding</span><b>₹{scheduled.toLocaleString("en-IN")}</b></div></div></div><div className="card p-5"><div className="section-title">Cash movement</div><div className="mt-4 space-y-2 text-sm"><div className="flex justify-between"><span>Supplier payments</span><b>₹{supplierPayments.toLocaleString("en-IN")}</b></div><div className="flex justify-between"><span>Operational surplus</span><b>₹{(totalSales-totalPurchases-totalExpenses).toLocaleString("en-IN")}</b></div></div></div></div></div></main><MobileActionBar/></div>;
+}
