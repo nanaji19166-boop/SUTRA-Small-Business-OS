@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { PwaRegister } from "@/app/components/PwaRegister";
 
 export const metadata: Metadata = {
   title: "SUTRA — Small Business OS",
@@ -10,7 +9,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body><PwaRegister />{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
