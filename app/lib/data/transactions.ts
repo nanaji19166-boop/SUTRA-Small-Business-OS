@@ -54,13 +54,26 @@ export async function recordPayment(input:{
   amount:number; paymentMethod:string; paymentDate?:string; reference?:string|null; notes?:string|null;
 }) {
   const supabase=await createClient();
+  if (input.scheduleId) {
+    const { data, error } = await supabase.rpc("record_collection_payment",{
+      p_business_id:input.businessId,
+      p_schedule_id:input.scheduleId,
+      p_amount:input.amount,
+      p_payment_method:input.paymentMethod,
+      p_payment_date:input.paymentDate ?? null,
+      p_reference:input.reference ?? null,
+      p_notes:input.notes ?? null,
+    });
+    if(error) throw new Error(error.message);
+    return data;
+  }
   const { data, error } = await supabase.rpc("record_payment",{
     p_business_id:input.businessId,
     p_customer_id:input.customerId ?? null,
     p_supplier_id:input.supplierId ?? null,
     p_sale_id:input.saleId ?? null,
     p_purchase_id:input.purchaseId ?? null,
-    p_schedule_id:input.scheduleId ?? null,
+    p_schedule_id:null,
     p_amount:input.amount,
     p_payment_method:input.paymentMethod,
     p_payment_date:input.paymentDate ?? null,
